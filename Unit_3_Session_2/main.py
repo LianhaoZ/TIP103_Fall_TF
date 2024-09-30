@@ -1,79 +1,73 @@
 # PROBLEM 1
 # Understand
 # Share 2 questions you would ask to help understand the question:
+# - can I use a greedy approach?
 # - can the array be empty?
-# - does the target always exist in array
 
 # Plan
 # Write out in plain English what you want to do: 
-# I will perform binary search, finding middle point and checkign against target, if middle value of array is greater than targer, I will check set the lowerbound to mid + 1, and vice versa to set upperbound to mid-1. 
+# I will first get the count of all tasks to schedule. Then I wil use a maxheap to calcualte the time needed to schedule each
+# tasks n apart, which also implies each cycle will take maximum of n tasks. I will first put all the frequencies into pq
+# Then, while I can add more tasks to the cycle, I will pop from freq and store the value - 1, which I will put back into the pq after cycle is done.
+# At each iteration, I will add the time taken for each cycle. If there are still tasks left then each cycle will take n+1 
+# but if the pq is empty then how ever many tasks were scheduled during last iteration will be added. 
 
 # Implement
 # Translate the pseudocode into Python and share your final answer: 
-def search(nums, target):
-  l , r = 0, len(nums)-1
-  while l <= r:
-      mid = (l+r) // 2
-      if nums[mid] > target:
+def leastInterval(tasks, n):
+    freq = [0] * 26
+    for ch in tasks:
+        freq[ord(ch) - ord('A')] += 1
+        
+    pq = [-f for f in freq if f > 0]
+    heapq.heapify(pq)
 
-          r = mid - 1
-      elif nums[mid] < target:
-          l = mid + 1
-      else:
-          return mid
-  return -1
+    time = 0 
+    while pq:
+        cycle = n + 1
+        store = []
+        task_count = 0 
+        while cycle > 0 and pq:
+            current_freq = -heapq.heappop(pq)
+            if current_freq > 1:
+                store.append(-(current_freq - 1))
+            task_count += 1
+            cycle -= 1 
+        for x in store:
+            heapq.heappush(pq, x) 
+        time += task_count if not pq else n + 1
+    return time
 
 
 # PROBLEM 2
 # Understand
 # Share 2 questions you would ask to help understand the question:
-# - can the total versions be 0?
+# - How can a vertial edge be represented?
 # - Are there any additional space constraints?
 
 # Plan
 # Write out in plain English what you want to do: 
-# I will binary search and check midpoint at each iteration
+# I will create a dictionary to record the gaps (when a brick ends) in each level of the wall. 
+# Then I will loop through the dictionary to find the gap that occurs the most frequent. 
+# The minimum number of crossed bricks will then be length of bricked wall - the count of the gap that occurs the most freqent
 
 # Implement
 # Translate the pseudocode into Python and share your final answer: 
-def firstBadVersion(n):
-  l, r = 1, n 
-  while l<r:
-      mid = (l+r)//2
-      if isBadVersion(mid): 
-          # If mid point is bad then there might be more bad versions before it, shift right pointer and check for earlier bad version.
-          r = mid
-      else:
-          # If mid point is good then we know that everything to the left is good, shift left pointer to check for bad version in right half
-          l = mid + 1
-  return r 
+def leastBricks(wall):
+    if not wall:
+        return 0 
+    leng = sum(wall[0]) 
+    check = {}
+    for i in wall:   
+        ptr = 0
+        for j in i:   
+            ptr += j
+            check[ptr] = check.get(ptr, 0) + 1 
 
+    m = 0
+    for i in check:
+        if i == leng: 
+            continue
+        m = max(check[i], m)
 
-# PROBLEM 3
-# Understand
-# Share 2 questions you would ask to help understand the question:
-# - can x be less than 1
-# - Are there any additional time constraints?
-
-# Plan
-# Write out in plain English what you want to do: 
-# use binary search to obtain midpoint, which is checked at each iteration against x/mid. If equal then mid ** 2 equals x, which means x ** 0.5 equals mid.
-
-# Implement
-# Translate the pseudocode into Python and share your final answer: 
-def mySqrt(x):
-  l,r = 1, x
-  while l <= r:
-      mid = (l+r)//2 
-      if mid == x // mid:
-          return mid
-      elif mid > x // mid:
-          r = mid - 1
-      else:
-          l = mid + 1
-  # Return the right pointer for the closes number to square for our target as it is the last remaining valid number.
-  return r
-
-
-
-
+    return len(wall) - m
