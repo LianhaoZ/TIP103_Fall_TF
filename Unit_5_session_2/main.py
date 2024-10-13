@@ -33,9 +33,6 @@ def numTrees(self, n: int) -> int:
             dp[i] += dp[j-1] * dp[i-j]
     return dp[n]
 
-
-        
-
 # Review / Evaulate 
 # n is max size of self.req at a time
 # O(n^2) time looping through all possible j for each i up to n.
