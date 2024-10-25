@@ -87,6 +87,6 @@ def cloneGraph(node):
  
 
 # Review / Evaulate
-# n is nodes in tree
-# O(n) worst case need to check all nodes until last level
-# O(n) time for storing all nodes into queue
+# n is nodes in graph
+# O(n * n) need to check all nodes
+# O(n * n) time for storing all nodes in adj list
