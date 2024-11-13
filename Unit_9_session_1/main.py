@@ -64,6 +64,6 @@ def longestPalindrome(s: str) -> str:
                   
 
 # Review / Evaulate
-# n is number of answers
+# n is length of string.
 # O(n^2) b/c looping through each index in the string, and expanding from center will worst case be O(n).
 # O(n) because copying string for the returned string, worst case copies whole string, which takes O(n) space.
